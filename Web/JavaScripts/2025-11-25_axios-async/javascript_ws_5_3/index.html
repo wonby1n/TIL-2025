@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <h1>인기 영화들</h1>
+  <ul>
+
+  </ul>
+  
+   <!-- axios CDN을 삽입한다. -->
+   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+   <script>
+    const ul = document.querySelector('ul')
+    // 코드를 입력한다.
+
+    function getMovie() {
+      axios({
+        method: 'GET',
+        url: 'https://api.themoviedb.org/3/movie/popular',
+        params: {
+          api_key : '14cda5727bb4003dfc7d0d8722af9952',
+          language: 'ko-KR',
+          page: '1'
+        },
+        headers: {accept: 'application/json'},
+      })
+      .then((response) => {
+        console.log(response)
+        const movies = response.data.results
+
+        movies.forEach(movie => {
+          if (movie.vote_average >= 7) {
+            const li = document.createElement('li')
+            li.textContent = movie.title
+            ul.appendChild(li)
+          }
+        });
+      })
+      .catch((error) => {
+      console.error(error)
+    })  
+    }
+
+    getMovie()
+
+    // async 방법으로 해보기
+    async function getMovie2() {
+      try {
+        const response = await axios({
+          method: 'GET',
+          url: 'https://api.themoviedb.org/3/movie/popular',
+          params: {
+            api_key: '14cda5727bb4003dfc7d0d8722af9952',
+            language: 'ko-KR',
+            page: 1,
+          },
+          headers: { accept: 'application/json' },
+      })
+
+      const movies = response.data.results
+
+      movies.forEach(movie => {
+        if (movie.vote_average >= 7) {
+          const li = document.createElement('li')
+          li.textContent = movie.title
+          ul.appendChild(li)
+        }
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  getMovie2()
+   </script>
+</body>
+</html>
