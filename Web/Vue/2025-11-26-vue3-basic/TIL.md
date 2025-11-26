@@ -30,7 +30,7 @@ app.mount('#app')
 
 - createApp({ ... }) 로 앱 인스턴스 생성
 - setup() 안에서 ref로 반응형 상태 정의
-- 마지막에 app.mount('#app') 로 DOM에 연결
+- 마지막에 `app.mount('#app')` 로 DOM에 연결
 
 ### 2) ref 사용 규칙
 
