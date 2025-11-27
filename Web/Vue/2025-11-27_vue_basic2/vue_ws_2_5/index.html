@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .is-selected {
+      background-color: #eee;
+    }
+
+    .is-required {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h1>다양한 전시 정보</h1>
+    <hr>
+    <ul>
+      <li id="영어 제목" :class="{ 'is-selected': j.isSelected }">
+        <label for="selected">전시 선택</label>
+        <input type="checkbox" name="selected" id="selected" v-model="j.isSelected">
+        <h3>{{ j.koTitle }}</h3>
+        <p v-html="j.description"></p>
+        <hr>
+        <p>{{ j.artMuseum }}</p>
+        <a :href="j.museumURL">전시장 바로가기</a>
+        <hr>
+        <p>입장권 구매하기</p>
+        <p>가격 : {{ j.price }} </p>
+        <div>
+          <span :class="{ 'is-required': (j.totalNum <= 0)}">인원 수 : {{ j.totalNum }} 명 </span>
+          <button @click="decreaseNum" :disabled="j.totalNum <= 0">-</button>
+          <button @click="increaseNum" :disabled="j.totalNum >= 10">+</button>
+        </div>
+        <hr>
+      </li>
+    </ul>
+    <p>총 입장료 : {{ j.price * j.totalNum }} 원</p>
+  </div>
+
+
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script>
+    /*
+      1. 현재 입장 인원의 수가 0명 초과일 때만, 인원 감소 메서드가 실행되도록 코드를 수정하시오.
+      2. 현재 입장 인원의 수가 10명 미만일 때만, 인원 증가 메서드가 실행되도록 코드를 수정하시오.
+      3. 인원 증/감 버튼에 disabled 속성을 부여하시오.
+    - 단, 인원수 기준에 따라 true/false가 할당되도록 한다.
+    - 인원수 기준은 최소 0명이상 최대 10명 이하이다.
+    */
+
+      const { createApp, ref } = Vue
+   const app = createApp({
+    setup () {
+      const j = ref({
+        koTitle : '모네 인사이드',
+        enTitle : 'monet-inside',
+        artMuseum : '예술의 전당',
+        museumURL : 'https://www.sac.or.kr/',
+        description : '<p> &lt;모네 인사이드&gt; 는 빛의 화가 <b>클로드 모네</b>가 남긴 소중한 명작들을 현대적 감각으로 재해석해 음악과 함께 감상하는 미디어아트 전시입니다. </p>',
+        isSelected : false,
+        price : 1000,
+        totalNum : 0,
+      })
+      const decreaseNum = () => {
+        if (j.value.totalNum <= 0) {
+          j.value.totalNum = 0
+        } else {
+          j.value.totalNum--
+        }
+      }
+      const increaseNum = () => {
+        if (j.value.totalNum >= 10) {
+          j.value.totalNum = 10
+        } else {
+          j.value.totalNum++
+        }
+      }
+      return {
+        j,
+        decreaseNum,
+        increaseNum,
+      }
+    }
+   })
+
+   app.mount('#app')
+  </script>
+</body>
+</html>
