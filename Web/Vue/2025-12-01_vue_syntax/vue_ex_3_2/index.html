@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .is-completed {
+      text-decoration: line-through;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <h1>Todo Application</h1>
+    <form @submit.prevent="addTodo">
+      <input type="text" v-model="userInput">
+      <input type="submit" value="Add">
+    </form>
+
+    <ul>
+      <li v-for="todo in todos" :key="todo.id">
+        <input type="checkbox" v-model="todo.isCompleted">
+        <span :class="{ 'is-completed': todo.isCompleted }">{{ todo.text }}</span>
+        <!-- 버튼을 클릭했을 때 이 todo의 id값을 줘서 이 todo를 삭제할 수 있도록 -->
+        <button @click="deleteTodo(todo.id)">Delete</button>
+      </li>
+    </ul>
+  </div>
+
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script>
+    const { createApp, ref } = Vue
+
+    const app = createApp({
+      setup() {
+        // 사용자가 입력한 값을 반응형 변수로 관리하자!!!
+        // 이 반응형 변수를 사용자의 입력 요소 input과 양방향 바인딩(v-model)
+        const userInput = ref("")
+        const todos = ref([])
+
+        const addTodo = () => {
+          // trim()을 사용해서 양쪽 공백 제거 후에도 빈문자열이라면 추가하지 않도록
+          if (userInput.value.trim() !== "") {
+            // 새로운 todo 객체를 만들고 todos 배열에 추가
+            const newTodo = {
+              id:Date.now(),
+              text:userInput.value,
+              isCompleted:false,
+            }
+            todos.value.push(newTodo)
+            userInput.value = ""
+          }
+        }
+
+        const deleteTodo = (id) => {
+          // 이 id를 가진 todo를 배열 안에서 찾아서 제거
+          const idx = todos.value.findIndex(function(todo) {
+            // 어떤 todo의 인덱스를 찾는 것인지
+            return todo.id === id
+          })
+          // 인덱스를 찾았다면 제거
+          if (idx !== -1 ) {
+            // idx 인덱스에서부터 1개 제거
+            todos.value.splice(idx, 1)
+          }
+        }
+        return { todos, addTodo, userInput, deleteTodo }
+      }
+    })
+
+    app.mount('#app')
+  </script>
+</body>
+
+</html>

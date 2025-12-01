@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .is-completed {
+      text-decoration: line-through;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <h1>Todo Application</h1>
+
+    <p>Completed Count: {{ completedCount }}</p>
+    
+    <select v-model="status">
+      <option value="all">전체</option>
+      <option value="completed">완료</option>
+      <option value="incompleted">미완료</option>
+    </select>
+
+
+    <form @submit.prevent="addTodo">
+      <input type="text" v-model="newTodo">
+      <input type="submit" value="Add">
+    </form>
+
+    <ul>
+      <li v-for="todo in filteredTodos" :key="todo.id">
+        <input type="checkbox" v-model="todo.isCompleted">
+        <span :class="{ 'is-completed': todo.isCompleted }">{{ todo.text }}</span>
+        <button @click="deleteTodo(todo.id)">Delete</button>
+      </li>
+    </ul>
+  </div>
+
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script>
+    const { createApp, ref, watch, computed } = Vue
+
+    const app = createApp({
+      setup() {
+        const todos = ref([])
+        const newTodo = ref('')
+
+        // 사용자가 선택한 select option과 바인딩할 반응형 변수
+        // 초기 상태
+        const status = ref("all")
+
+        // status 상태에 다라서 return 하는 배열이 다르다
+        // computed 활용
+        const filteredTodos = computed(
+          function () {
+            // status === 'all' => 전체 todos return
+            if (status.value === "all") {
+              return todos.value
+            }
+            else if (status.value === "completed") {
+              return todos.value.filter((todo) => todo.isCompleted)
+            }
+            else if (status.value === "incompleted") {
+              return todos.value.filter((todo) => !todo.isCompleted)
+            }
+            // status === 'completed' => todos 안에 iscompleted가 true인것만 모아서 return
+            // status === 'incompleted' => todos 안에 iscompleted가 false인것만 모아서 return
+
+          }
+        )
+
+
+        // 완료된 할일의 개수를 나타내는 반응형 변수
+        const completedCount = ref(0)
+
+        // todo의 할일 완료 상태가 바뀌면
+        // 완료된 할일의 개수를 세서 completedCount를 최신화
+        // watch를 사용해서 해보자
+        watch(todos, (newTodos, oldTodos) => {
+          // 감시 대상에서 변경이 일어날시 실행할 코드
+
+          // 변경후 todo 목록에서 isCompleted가 true인것만 모아서 새로운 배열 만들고 길이 재기
+          const newCompTodos = newTodos.filter((todo) => {
+            return todo.isCompleted
+          })
+          const count = newCompTodos.length
+          completedCount.value = count
+          // 객체의 깊은 감시 활성화하는 옵션
+        }, {deep:true})
+
+        const addTodo = function () {
+          if (newTodo.value.trim() !== '') {
+            const todoObj = {
+              id: Date.now(),
+              text: newTodo.value,
+              isCompleted: false
+            }
+            todos.value.push(todoObj)
+            newTodo.value = ''
+          }
+        }
+
+        const deleteTodo = function (todoId) {
+          const index = todos.value.findIndex(todo => todo.id === todoId)
+          if (index !== -1) {
+            todos.value.splice(index, 1)
+          }
+        }
+
+        return { todos, newTodo, addTodo, deleteTodo, completedCount ,status,filteredTodos }
+      }
+    })
+
+    app.mount('#app')
+  </script>
+</body>
+
+</html>
