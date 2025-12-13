@@ -13,7 +13,7 @@
 ## 📂 폴더 구조
 
 ```text
-algorithms/   # 알고리즘, 자료구조, 코딩테스트 문제 풀이
+algorithms/   # 알고리즘, 자료구조, 코테 문제 풀이
 web/          # HTML, CSS, JavaScript, API 실습
 django/       # Django, DRF 관련 코드 및 실습
 notes/        # 강의/개념/이론 정리 (Markdown)
